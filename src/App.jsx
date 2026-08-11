@@ -7,7 +7,7 @@ function App() {
     
     {
       id: 1,
-      name: "Akshu",
+      name: "Akshita",
       course: "CSE",
       age: 20
     },

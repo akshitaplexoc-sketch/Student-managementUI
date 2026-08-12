@@ -1,169 +1,338 @@
 import { useState } from "react";
+import "./App.css";
 import StudentCard from "./components/StudentCard";
 import StudentForm from "./components/StudentForm";
-import "./App.css";
+
 function App() {
-  const [students , setStudents] = useState([
-    
+  // =========================
+  // STUDENTS DATA
+  // =========================
+
+  const [students, setStudents] = useState([
     {
       id: 1,
-      name: "Akshita",
+      name: "Akshu",
       course: "CSE",
-      age: 20
+      age: 20,
     },
     {
       id: 2,
       name: "Rahul",
       course: "IT",
-      age: 21
+      age: 21,
     },
     {
       id: 3,
       name: "Priya",
       course: "CSE",
-      age: 20
-    }
+      age: 20,
+    },
   ]);
 
-  const [search, setSearch] = useState("");
+  // =========================
+  // STATES
+  // =========================
 
+  const [search, setSearch] = useState("");
   const [courseFilter, setCourseFilter] = useState("All");
   const [editingStudent, setEditingStudent] = useState(null);
-  const updateStudent = (updatedStudent) => {
-  setStudents(
-    students.map((student) =>
-      student.id === updatedStudent.id
-        ? updatedStudent
-        : student
-    )
-  );
+  const [studentToDelete, setStudentToDelete] = useState(null);
 
-  setEditingStudent(null);
-};
-const cancelEdit = () => {
-  setEditingStudent(null);
-}; 
+  // =========================
+  // ADD STUDENT
+  // =========================
 
-  const  addStudent = (student) => {
-    setStudents([...students, student]);
+  const addStudent = (newStudent) => {
+    setStudents((prevStudents) => [
+      ...prevStudents,
+      newStudent,
+    ]);
   };
-  const courses = [...new Set(
-  students.map((student) => student.course)
-)];
 
-  const filteredStudents = students
-  .filter((student) =>
-    student.name.toLowerCase().includes(search.toLowerCase())
-  )
-  .filter((student) =>
-    courseFilter === "All" || student.course === courseFilter
-  );
+  // =========================
+  // UPDATE STUDENT
+  // =========================
+
+  const updateStudent = (updatedStudent) => {
+    setStudents((prevStudents) =>
+      prevStudents.map((student) =>
+        student.id === updatedStudent.id
+          ? updatedStudent
+          : student
+      )
+    );
+
+    setEditingStudent(null);
+  };
+
+  // =========================
+  // CANCEL EDIT
+  // =========================
+
+  const cancelEdit = () => {
+    setEditingStudent(null);
+  };
+
+  // =========================
+  // DYNAMIC COURSES
+  // =========================
+
+  const courses = [
+    ...new Set(
+      students.map((student) => student.course)
+    ),
+  ];
+
+  // =========================
+  // FILTER STUDENTS
+  // =========================
+
+  const filteredStudents = students.filter((student) => {
+    const matchesSearch = student.name
+      .toLowerCase()
+      .includes(search.toLowerCase());
+
+    const matchesCourse =
+      courseFilter === "All" ||
+      student.course === courseFilter;
+
+    return matchesSearch && matchesCourse;
+  });
+
+  // =========================
+  // STATISTICS
+  // =========================
 
   const totalStudents = students.length;
 
-const cseStudents = students.filter(
-  (student) => student.course === "CSE"
-).length;
+  const cseStudents = students.filter(
+    (student) => student.course === "CSE"
+  ).length;
 
-const itStudents = students.filter(
-  (student) => student.course === "IT"
-).length;
+  const itStudents = students.filter(
+    (student) => student.course === "IT"
+  ).length;
+
+  // =========================
+  // CLEAR FILTERS
+  // =========================
+
+  const clearFilters = () => {
+    setSearch("");
+    setCourseFilter("All");
+  };
+
+  // =========================
+  // UI
+  // =========================
 
   return (
     <div className="app">
-    <div className="container"> 
-      <div className="header"> 
-      <h1>🎓 Student Management System </h1>
-      <p>Manage and organize your students easily.</p>
+      <div className="container">
+
+        {/* HEADER */}
+
+        <div className="header">
+          <h1>🎓 Student Management</h1>
+          <p>
+            Manage and organize your students easily
+          </p>
+        </div>
+
+        {/* STATISTICS */}
+
+        <div className="stats-container">
+
+          <div className="stat-card">
+            <h3>Total Students</h3>
+            <p>{totalStudents}</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>CSE Students</h3>
+            <p>{cseStudents}</p>
+          </div>
+
+          <div className="stat-card">
+            <h3>IT Students</h3>
+            <p>{itStudents}</p>
+          </div>
+
+        </div>
+
+        {/* STUDENT FORM */}
+
+        <StudentForm
+          onAddStudent={addStudent}
+          onUpdateStudent={updateStudent}
+          students={students}
+          editingStudent={editingStudent}
+          onCancelEdit={cancelEdit}
+        />
+
+        {/* SEARCH AND FILTER */}
+
+        <div className="search-section">
+
+          <input
+            type="text"
+            placeholder="🔍 Search student..."
+            value={search}
+            onChange={(e) =>
+              setSearch(e.target.value)
+            }
+          />
+
+          <select
+            className="course-filter"
+            value={courseFilter}
+            onChange={(e) =>
+              setCourseFilter(e.target.value)
+            }
+          >
+            <option value="All">
+              All Courses
+            </option>
+
+            {courses.map((course) => (
+              <option
+                key={course}
+                value={course}
+              >
+                {course}
+              </option>
+            ))}
+          </select>
+
+        </div>
+
+        {/* STUDENT LIST */}
+
+        {filteredStudents.length > 0 ? (
+
+          <div className="students-grid">
+
+            {filteredStudents.map((student) => (
+
+              <StudentCard
+                key={student.id}
+                name={student.name}
+                course={student.course}
+                age={student.age}
+
+                onEdit={() =>
+                  setEditingStudent(student)
+                }
+
+                onDelete={() =>
+                  setStudentToDelete(student)
+                }
+              />
+
+            ))}
+
+          </div>
+
+        ) : (
+
+          /* NO STUDENTS FOUND */
+
+          <div className="no-students">
+
+            <div className="empty-icon">
+              🔍
+            </div>
+
+            <h2>
+              No Students Found
+            </h2>
+
+            <p>
+              Try changing your search or
+              course filter.
+            </p>
+
+            <button
+              className="clear-btn"
+              onClick={clearFilters}
+            >
+              Clear Filters
+            </button>
+
+          </div>
+
+        )}
+
+        {/* =========================
+            DELETE MODAL
+        ========================= */}
+
+        {studentToDelete && (
+
+          <div className="modal-overlay">
+
+            <div className="delete-modal">
+
+              <div className="modal-icon">
+                ⚠️
+              </div>
+
+              <h2>
+                Delete Student?
+              </h2>
+
+              <p>
+                Are you sure you want to
+                delete{" "}
+                <strong>
+                  {studentToDelete.name}
+                </strong>
+                ?
+              </p>
+
+              <div className="modal-buttons">
+
+                {/* CANCEL */}
+
+                <button
+                  className="modal-cancel"
+                  onClick={() =>
+                    setStudentToDelete(null)
+                  }
+                >
+                  Cancel
+                </button>
+
+                {/* DELETE */}
+
+                <button
+                  className="modal-delete"
+                  onClick={() => {
+
+                    setStudents(
+                      (prevStudents) =>
+                        prevStudents.filter(
+                          (student) =>
+                            student.id !==
+                            studentToDelete.id
+                        )
+                    );
+
+                    setStudentToDelete(null);
+                  }}
+                >
+                  Delete
+                </button>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        )}
+
       </div>
-      <div className="stats-container">
-
-  <div className="stat-card">
-    <h3>Total Students</h3>
-    <p>{totalStudents}</p>
-  </div>
-
-  <div className="stat-card">
-    <h3>CSE Students</h3>
-    <p>{cseStudents}</p>
-  </div>
-
-  <div className="stat-card">
-    <h3>IT Students</h3>
-    <p>{itStudents}</p>
-  </div>
-
-</div>
-      <StudentForm 
-      onAddStudent={addStudent}  
-      onUpdateStudent={updateStudent}
-      students={students}
-      editingStudent={editingStudent}
-      onCancelEdit={cancelEdit}
-      />
-
-      <div className="controls">
-      <input
-      className="search-box"
-        type="text"
-        placeholder="🔍 Search student..."
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
-      
-      <select
-      className="course-filter"
-      value={courseFilter}
-      onChange={(e) => setCourseFilter(e.target.value)}>
-
-     <option value="All">All Courses</option>
-
-     {courses.map((course) => (
-      <option key={course} value={course}>
-      {course}
-     </option>
-     ))}
-      </select>
-      </div>
-
-      <p>Students Found: {filteredStudents.length}</p>
-      <div className="students-grid">
-      {filteredStudents.length > 0 ? (
-  <div className="students-grid">
-    {filteredStudents.map((student) => (
-      <StudentCard
-        key={student.id}
-        name={student.name}
-        course={student.course}
-        age={student.age}
-        onEdit={() => setEditingStudent(student)}
-        onDelete={() => {
-          setStudents(
-            students.filter((s) => s.id !== student.id)
-          );
-        }}
-      />
-    ))}
-  </div>
-) : (
-  <div className="no-students">
-    <div className="empty-icon">🔍</div>
-    <h2>No Students Found</h2>
-    <p>Try changing your search or course filter.</p>
-
-    <button
-      className="clear-btn"
-      onClick={() => {
-        setSearch("");
-        setCourseFilter("All");
-      }}
-    >
-      Clear Filters
-    </button>
-  </div>
-)}
-      </div>
-    </div>
     </div>
   );
 }

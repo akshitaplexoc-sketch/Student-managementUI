@@ -1,3 +1,28 @@
+# Student Management System
+
+A responsive Student Management UI built using React.
+
+## Features
+
+- Add students
+- Edit students
+- Delete students with confirmation
+- Search students
+- Filter by course
+- Form validation
+- Student statistics
+- Responsive design
+
+## Technologies
+
+- React
+- JavaScript ES6
+- JSX
+- HTML
+- CSS
+- Vite
+- Git & GitHub
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

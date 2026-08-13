@@ -1,63 +1,95 @@
-import { Mail, Phone, Pencil, Trash2 } from "lucide-react";
+import {
+  Mail,
+  Phone,
+  Pencil,
+  Trash2
+} from "lucide-react";
 
 function StudentCard({
-  name,
-  course,
-  age,
-  phone,
-  email,
-  onDelete,
-  onEdit
+  student,
+  onEdit,
+  onDelete
 }) {
+
   return (
     <div className="student-card">
 
+      {/* Avatar */}
+
       <div className="student-avatar">
-        {name.charAt(0).toUpperCase()}
+
+        {student.name
+          .charAt(0)
+          .toUpperCase()}
+
       </div>
 
-      <h2>{name}</h2>
+      {/* Name */}
 
-      <div className="student-details">
+      <h2>
+        {student.name}
+      </h2>
+
+      {/* Course + Age */}
+
+      <div className="student-info-row">
+
         <span className="course-badge">
-          {course}
+          {student.course}
         </span>
 
         <span className="age-text">
-          Age: {age}
+          Age {student.age}
         </span>
+
       </div>
+
+      {/* Contact */}
 
       <div className="student-contact">
 
         <p>
-          <Phone size={16} />
-          {phone}
+          <Phone size={15} />
+
+          {student.phone}
         </p>
 
         <p>
-          <Mail size={16} />
-          {email}
+          <Mail size={15} />
+
+          {student.email}
         </p>
 
       </div>
 
-      <div className="card-buttons">
+      {/* Buttons */}
+
+      <div className="student-card-actions">
 
         <button
-          className="edit-btn"
-          onClick={onEdit}
+          className="card-edit-btn"
+          onClick={() =>
+            onEdit(student)
+          }
         >
-          <Pencil size={16} />
+
+          <Pencil size={15} />
+
           Edit
+
         </button>
 
         <button
-          className="delete-btn"
-          onClick={onDelete}
+          className="card-delete-btn"
+          onClick={() =>
+            onDelete(student.id)
+          }
         >
-          <Trash2 size={16} />
+
+          <Trash2 size={15} />
+
           Delete
+
         </button>
 
       </div>

@@ -122,9 +122,91 @@ body {
   font-size: 22px;
 }
 
+/* =========================
+   STUDENT FORM
+========================= */
+
+.student-form {
+  background: rgba(255, 255, 255, 0.75);
+  padding: 28px;
+  border-radius: 18px;
+  margin-bottom: 25px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.student-form h2 {
+  margin: 0 0 20px;
+  font-size: 24px;
+  color: #1f2937;
+}
+
+/* Form fields */
+
 .form-fields {
-  display: flex;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  box-sizing: border-box;
+  grid-template-columns: 1fr;
+}
+
+.form-fields input,
+.form-fields select {
+  width: 100%;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  box-sizing: border-box;
+}
+
+.form-fields input:focus,
+.form-fields select:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.12);
+}
+
+/* Add / Update button */
+
+.form-fields > button:not(.cancel-btn) {
+  width: 100%;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #6366f1;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.form-fields > button:not(.cancel-btn):hover {
+  background: #4f46e5;
+}
+
+/* Cancel button */
+
+.form-fields .cancel-btn {
+  width: 100%;
+  padding: 13px 18px;
+  border: none;
+  border-radius: 10px;
+  background: #6b7280;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.form-fields .cancel-btn:hover {
+  background: #4b5563;
 }
 
 .form-fields input,

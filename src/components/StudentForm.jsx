@@ -5,13 +5,14 @@ function StudentForm({
   students = [],
   editingStudent,
   onUpdateStudent,
-  onCancelEdit,
+  onCancelEdit
 }) {
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [age, setAge] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -21,9 +22,9 @@ function StudentForm({
 
   useEffect(() => {
     if (editingStudent) {
-      setName(editingStudent.name);
-      setCourse(editingStudent.course);
-      setAge(editingStudent.age);
+      setName(editingStudent.name || "");
+      setCourse(editingStudent.course || "");
+      setAge(editingStudent.age || "");
       setPhone(editingStudent.phone || "");
       setEmail(editingStudent.email || "");
     } else {
@@ -31,7 +32,7 @@ function StudentForm({
       setCourse("");
       setAge("");
       setPhone("");
-      setEmail(""); 
+      setEmail("");
     }
 
     setError("");
@@ -39,49 +40,74 @@ function StudentForm({
   }, [editingStudent]);
 
   // =========================
-  // ADD / UPDATE STUDENT
+  // SUBMIT
   // =========================
 
   const handleSubmit = () => {
     setError("");
     setSuccess("");
 
-    // Empty field validation
-    if (!name.trim() || !course || !age || !phone.trim() || !email.trim()) {
+    // Empty fields
+    if (
+      !name.trim() ||
+      !course ||
+      !age ||
+      !phone.trim() ||
+      !email.trim()
+    ) {
       setError("⚠️ Please fill all fields");
       return;
     }
 
     // Age validation
-    if (Number(age) <= 0 || Number(age) > 100) {
-      setError("⚠️ Please enter a valid age between 1 and 100");
+    if (age <= 0 || age > 100) {
+      setError(
+        "⚠️ Please enter a valid age between 1 and 100"
+      );
+      return;
+    }
+
+    // Phone validation
+    if (!/^[0-9]{10}$/.test(phone)) {
+      setError(
+        "⚠️ Please enter a valid 10-digit phone number"
+      );
+      return;
+    }
+
+    // Email validation
+    if (!email.includes("@")) {
+      setError(
+        "⚠️ Please enter a valid email address"
+      );
       return;
     }
 
     // =========================
-    // EDIT MODE
+    // UPDATE STUDENT
     // =========================
 
     if (editingStudent) {
-
       const updatedStudent = {
         id: editingStudent.id,
         name: name.trim(),
         course: course,
-        age: Number(age),
+        age: age,
         phone: phone.trim(),
-        email: email.trim(),
+        email: email.trim()
       };
 
       onUpdateStudent(updatedStudent);
 
-      setSuccess("✅ Student updated successfully!");
+      setSuccess(
+        "✅ Student updated successfully!"
+      );
 
       return;
     }
 
     // =========================
-    // ADD MODE
+    // DUPLICATE CHECK
     // =========================
 
     const duplicate = students.some(
@@ -93,29 +119,37 @@ function StudentForm({
     );
 
     if (duplicate) {
-      setError("⚠️ This student already exists");
+      setError(
+        "⚠️ This student already exists"
+      );
       return;
     }
+
+    // =========================
+    // ADD STUDENT
+    // =========================
 
     const newStudent = {
       id: Date.now(),
       name: name.trim(),
       course: course,
-      age: Number(age),
+      age: age,
       phone: phone.trim(),
-      email: email.trim(),
+      email: email.trim()
     };
 
     onAddStudent(newStudent);
 
-    // Clear form
+    // Clear fields
     setName("");
     setCourse("");
     setAge("");
     setPhone("");
     setEmail("");
 
-    setSuccess("✅ Student added successfully!");
+    setSuccess(
+      "✅ Student added successfully!"
+    );
   };
 
   // =========================
@@ -128,6 +162,7 @@ function StudentForm({
     setAge("");
     setPhone("");
     setEmail("");
+
     setError("");
     setSuccess("");
 
@@ -147,7 +182,7 @@ function StudentForm({
           : "Add New Student"}
       </h2>
 
-      {/* Error Message */}
+      {/* ERROR MESSAGE */}
 
       {error && (
         <p className="form-error">
@@ -155,7 +190,7 @@ function StudentForm({
         </p>
       )}
 
-      {/* Success Message */}
+      {/* SUCCESS MESSAGE */}
 
       {success && (
         <p className="form-success">
@@ -163,9 +198,11 @@ function StudentForm({
         </p>
       )}
 
+      {/* FORM FIELDS */}
+
       <div className="form-fields">
 
-        {/* Student Name */}
+        {/* NAME */}
 
         <input
           type="text"
@@ -176,7 +213,7 @@ function StudentForm({
           }
         />
 
-        {/* Course */}
+        {/* COURSE */}
 
         <select
           value={course}
@@ -205,34 +242,40 @@ function StudentForm({
           </option>
         </select>
 
-        {/* Age */}
+        {/* AGE */}
 
         <input
           type="number"
           placeholder="Age"
-          min="1"
-          max="100"
           value={age}
           onChange={(e) =>
             setAge(e.target.value)
           }
         />
 
+        {/* PHONE */}
+
         <input
           type="tel"
           placeholder="Phone Number"
           value={phone}
-          onChange={(e) => setPhone(e.target.value)}
+          onChange={(e) =>
+            setPhone(e.target.value)
+          }
         />
+
+        {/* EMAIL */}
 
         <input
           type="email"
           placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          onChange={(e) =>
+            setEmail(e.target.value)
+          }
         />
 
-        {/* Submit Button */}
+        {/* ADD / UPDATE */}
 
         <button onClick={handleSubmit}>
           {editingStudent
@@ -240,11 +283,10 @@ function StudentForm({
             : "+ Add Student"}
         </button>
 
-        {/* Cancel Button */}
+        {/* CANCEL */}
 
         {editingStudent && (
           <button
-            type="button"
             className="cancel-btn"
             onClick={handleCancel}
           >
@@ -253,6 +295,7 @@ function StudentForm({
         )}
 
       </div>
+
     </div>
   );
 }

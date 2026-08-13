@@ -1,40 +1,42 @@
 import { LayoutDashboard, Settings } from "lucide-react";
 import { useState } from "react";
 import "./App.css";
+
 import StudentCard from "./components/StudentCard";
 import StudentForm from "./components/StudentForm";
 
 function App() {
+
   // =========================
   // STUDENTS DATA
   // =========================
 
   const [students, setStudents] = useState([
-  {
-    id: 1,
-    name: "Akshita",
-    course: "CSE",
-    age: 20,
-    phone: "9876543210",
-    email: "akshita@gmail.com"
-  },
-  {
-    id: 2,
-    name: "Rahul",
-    course: "IT",
-    age: 21,
-    phone: "9876543211",
-    email: "rahul@gmail.com"
-  },
-  {
-    id: 3,
-    name: "Priya",
-    course: "CSE",
-    age: 20,
-    phone: "9876543212",
-    email: "priya@gmail.com"
-  }
-]);
+    {
+      id: 1,
+      name: "Akshita",
+      course: "CSE",
+      age: 20,
+      phone: "9876543210",
+      email: "akshita@gmail.com"
+    },
+    {
+      id: 2,
+      name: "Rahul",
+      course: "IT",
+      age: 21,
+      phone: "9876543211",
+      email: "rahul@gmail.com"
+    },
+    {
+      id: 3,
+      name: "Priya",
+      course: "CSE",
+      age: 20,
+      phone: "9876543212",
+      email: "priya@gmail.com"
+    }
+  ]);
 
   // =========================
   // STATES
@@ -42,7 +44,9 @@ function App() {
 
   const [search, setSearch] = useState("");
   const [courseFilter, setCourseFilter] = useState("All");
+
   const [editingStudent, setEditingStudent] = useState(null);
+
   const [studentToDelete, setStudentToDelete] = useState(null);
 
   // =========================
@@ -52,8 +56,16 @@ function App() {
   const addStudent = (newStudent) => {
     setStudents((prevStudents) => [
       ...prevStudents,
-      newStudent,
+      newStudent
     ]);
+  };
+
+  // =========================
+  // EDIT STUDENT
+  // =========================
+
+  const handleEdit = (student) => {
+    setEditingStudent(student);
   };
 
   // =========================
@@ -81,44 +93,85 @@ function App() {
   };
 
   // =========================
+  // DELETE CLICK
+  // =========================
+
+  const handleDeleteClick = (student) => {
+    setStudentToDelete(student);
+  };
+
+  // =========================
+  // CONFIRM DELETE
+  // =========================
+
+  const confirmDelete = () => {
+    if (!studentToDelete) return;
+
+    setStudents((prevStudents) =>
+      prevStudents.filter(
+        (student) =>
+          student.id !== studentToDelete.id
+      )
+    );
+
+    setStudentToDelete(null);
+  };
+
+  // =========================
   // DYNAMIC COURSES
   // =========================
 
   const courses = [
     ...new Set(
-      students.map((student) => student.course)
-    ),
+      students.map(
+        (student) => student.course
+      )
+    )
   ];
 
   // =========================
   // FILTER STUDENTS
   // =========================
 
-  const filteredStudents = students.filter((student) => {
-    const matchesSearch = student.name
-      .toLowerCase()
-      .includes(search.toLowerCase());
+  const filteredStudents = students.filter(
+    (student) => {
 
-    const matchesCourse =
-      courseFilter === "All" ||
-      student.course === courseFilter;
+      const matchesSearch =
+        student.name
+          .toLowerCase()
+          .includes(
+            search.toLowerCase()
+          );
 
-    return matchesSearch && matchesCourse;
-  });
+      const matchesCourse =
+        courseFilter === "All" ||
+        student.course === courseFilter;
+
+      return (
+        matchesSearch &&
+        matchesCourse
+      );
+    }
+  );
 
   // =========================
   // STATISTICS
   // =========================
 
-  const totalStudents = students.length;
+  const totalStudents =
+    students.length;
 
-  const cseStudents = students.filter(
-    (student) => student.course === "CSE"
-  ).length;
+  const cseStudents =
+    students.filter(
+      (student) =>
+        student.course === "CSE"
+    ).length;
 
-  const itStudents = students.filter(
-    (student) => student.course === "IT"
-  ).length;
+  const itStudents =
+    students.filter(
+      (student) =>
+        student.course === "IT"
+    ).length;
 
   // =========================
   // CLEAR FILTERS
@@ -135,64 +188,114 @@ function App() {
 
   return (
     <div className="app">
+
       <div className="container">
 
-        {/* HEADER */}
+        {/* =========================
+            HEADER
+        ========================= */}
 
         <div className="header">
 
-        <LayoutDashboard
-          size={40}
-          className="header-icon"
-        />
-        <h1>Student Management System</h1>
-        <p>
-           Manage and organize your students easily
-        </p>
+          <LayoutDashboard
+            size={40}
+            className="header-icon"
+          />
 
-</div>
+          <h1>
+            Student Management System
+          </h1>
+
+          <p>
+            Manage and organize your
+            students easily
+          </p>
+
+        </div>
+
+        {/* =========================
+            SETTINGS
+        ========================= */}
 
         <div className="settings-section">
 
           <button className="settings-btn">
+
             <Settings size={18} />
+
             Settings
+
           </button>
 
         </div>
 
-        {/* STATISTICS */}
+        {/* =========================
+            STATISTICS
+        ========================= */}
 
         <div className="stats-container">
 
           <div className="stat-card">
-            <h3>Total Students</h3>
-            <p>{totalStudents}</p>
+
+            <h3>
+              Total Students
+            </h3>
+
+            <p>
+              {totalStudents}
+            </p>
+
           </div>
 
           <div className="stat-card">
-            <h3>CSE Students</h3>
-            <p>{cseStudents}</p>
+
+            <h3>
+              CSE Students
+            </h3>
+
+            <p>
+              {cseStudents}
+            </p>
+
           </div>
 
           <div className="stat-card">
-            <h3>IT Students</h3>
-            <p>{itStudents}</p>
+
+            <h3>
+              IT Students
+            </h3>
+
+            <p>
+              {itStudents}
+            </p>
+
           </div>
 
         </div>
 
-        {/* STUDENT FORM */}
+        {/* =========================
+            STUDENT FORM
+        ========================= */}
 
         <StudentForm
+
           onAddStudent={addStudent}
+
           onUpdateStudent={updateStudent}
+
           students={students}
+
           editingStudent={editingStudent}
+
           onCancelEdit={cancelEdit}
+
         />
 
-        {/* SEARCH AND FILTER */}
+        {/* =========================
+            SEARCH & FILTER
+        ========================= */}
+
+        {/* SEARCH & FILTER */}
 
         <div className="search-section">
 
@@ -200,27 +303,18 @@ function App() {
             type="text"
             placeholder="🔍 Search student..."
             value={search}
-            onChange={(e) =>
-              setSearch(e.target.value)
-            }
+            onChange={(e) => setSearch(e.target.value)}
           />
 
           <select
             className="course-filter"
             value={courseFilter}
-            onChange={(e) =>
-              setCourseFilter(e.target.value)
-            }
+            onChange={(e) => setCourseFilter(e.target.value)}
           >
-            <option value="All">
-              All Courses
-            </option>
+            <option value="All">All Courses</option>
 
             {courses.map((course) => (
-              <option
-                key={course}
-                value={course}
-              >
+              <option key={course} value={course}>
                 {course}
               </option>
             ))}
@@ -228,39 +322,51 @@ function App() {
 
         </div>
 
-        {/* STUDENT LIST */}
+        {/* =========================
+            STUDENT LIST
+        ========================= */}
 
         {filteredStudents.length > 0 ? (
 
           <div className="students-grid">
 
-            {filteredStudents.map((student) => (
+            {filteredStudents.map(
+              (student) => (
 
-              <StudentCard
-                key={student.id}
-                name={student.name}
-                course={student.course}
-                age={student.age}
-                phone={student.phone}
-                email={student.email}
-                
+                <StudentCard
 
-                onEdit={() =>
-                  setEditingStudent(student)
-                }
+                  key={student.id}
 
-                onDelete={() =>
-                  setStudentToDelete(student)
-                }
-              />
+                  name={student.name}
 
-            ))}
+                  course={student.course}
+
+                  age={student.age}
+
+                  phone={student.phone}
+
+                  email={student.email}
+
+                  onEdit={() =>
+                    handleEdit(student)
+                  }
+
+                  onDelete={() =>
+                    handleDeleteClick(student)
+                  }
+
+                />
+
+              )
+            )}
 
           </div>
 
         ) : (
 
-          /* NO STUDENTS FOUND */
+          /* =========================
+             NO STUDENTS
+          ========================= */
 
           <div className="no-students">
 
@@ -273,8 +379,8 @@ function App() {
             </h2>
 
             <p>
-              Try changing your search or
-              course filter.
+              Try changing your search
+              or course filter.
             </p>
 
             <button
@@ -289,7 +395,7 @@ function App() {
         )}
 
         {/* =========================
-            DELETE MODAL
+            DELETE CONFIRMATION MODAL
         ========================= */}
 
         {studentToDelete && (
@@ -307,12 +413,16 @@ function App() {
               </h2>
 
               <p>
+
                 Are you sure you want to
                 delete{" "}
+
                 <strong>
                   {studentToDelete.name}
                 </strong>
+
                 ?
+
               </p>
 
               <div className="modal-buttons">
@@ -332,19 +442,7 @@ function App() {
 
                 <button
                   className="modal-delete"
-                  onClick={() => {
-
-                    setStudents(
-                      (prevStudents) =>
-                        prevStudents.filter(
-                          (student) =>
-                            student.id !==
-                            studentToDelete.id
-                        )
-                    );
-
-                    setStudentToDelete(null);
-                  }}
+                  onClick={confirmDelete}
                 >
                   Delete
                 </button>
@@ -358,6 +456,7 @@ function App() {
         )}
 
       </div>
+
     </div>
   );
 }

@@ -10,6 +10,8 @@ function StudentForm({
   const [name, setName] = useState("");
   const [course, setCourse] = useState("");
   const [age, setAge] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
@@ -22,10 +24,14 @@ function StudentForm({
       setName(editingStudent.name);
       setCourse(editingStudent.course);
       setAge(editingStudent.age);
+      setPhone(editingStudent.phone || "");
+      setEmail(editingStudent.email || "");
     } else {
       setName("");
       setCourse("");
       setAge("");
+      setPhone("");
+      setEmail(""); 
     }
 
     setError("");
@@ -41,7 +47,7 @@ function StudentForm({
     setSuccess("");
 
     // Empty field validation
-    if (!name.trim() || !course || !age) {
+    if (!name.trim() || !course || !age || !phone.trim() || !email.trim()) {
       setError("⚠️ Please fill all fields");
       return;
     }
@@ -57,11 +63,14 @@ function StudentForm({
     // =========================
 
     if (editingStudent) {
+
       const updatedStudent = {
         id: editingStudent.id,
         name: name.trim(),
         course: course,
         age: Number(age),
+        phone: phone.trim(),
+        email: email.trim(),
       };
 
       onUpdateStudent(updatedStudent);
@@ -93,6 +102,8 @@ function StudentForm({
       name: name.trim(),
       course: course,
       age: Number(age),
+      phone: phone.trim(),
+      email: email.trim(),
     };
 
     onAddStudent(newStudent);
@@ -101,6 +112,8 @@ function StudentForm({
     setName("");
     setCourse("");
     setAge("");
+    setPhone("");
+    setEmail("");
 
     setSuccess("✅ Student added successfully!");
   };
@@ -113,6 +126,8 @@ function StudentForm({
     setName("");
     setCourse("");
     setAge("");
+    setPhone("");
+    setEmail("");
     setError("");
     setSuccess("");
 
@@ -201,6 +216,20 @@ function StudentForm({
           onChange={(e) =>
             setAge(e.target.value)
           }
+        />
+
+        <input
+          type="tel"
+          placeholder="Phone Number"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+        />
+
+        <input
+          type="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         {/* Submit Button */}

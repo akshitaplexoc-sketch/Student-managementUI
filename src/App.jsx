@@ -1,3 +1,4 @@
+import { LayoutDashboard, Settings } from "lucide-react";
 import { useState } from "react";
 import "./App.css";
 import StudentCard from "./components/StudentCard";
@@ -9,25 +10,31 @@ function App() {
   // =========================
 
   const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: "Akshu",
-      course: "CSE",
-      age: 20,
-    },
-    {
-      id: 2,
-      name: "Rahul",
-      course: "IT",
-      age: 21,
-    },
-    {
-      id: 3,
-      name: "Priya",
-      course: "CSE",
-      age: 20,
-    },
-  ]);
+  {
+    id: 1,
+    name: "Akshita",
+    course: "CSE",
+    age: 20,
+    phone: "9876543210",
+    email: "akshita@gmail.com"
+  },
+  {
+    id: 2,
+    name: "Rahul",
+    course: "IT",
+    age: 21,
+    phone: "9876543211",
+    email: "rahul@gmail.com"
+  },
+  {
+    id: 3,
+    name: "Priya",
+    course: "CSE",
+    age: 20,
+    phone: "9876543212",
+    email: "priya@gmail.com"
+  }
+]);
 
   // =========================
   // STATES
@@ -133,10 +140,25 @@ function App() {
         {/* HEADER */}
 
         <div className="header">
-          <h1>🎓 Student Management</h1>
-          <p>
-            Manage and organize your students easily
-          </p>
+
+        <LayoutDashboard
+          size={40}
+          className="header-icon"
+        />
+        <h1>Student Management System</h1>
+        <p>
+           Manage and organize your students easily
+        </p>
+
+</div>
+
+        <div className="settings-section">
+
+          <button className="settings-btn">
+            <Settings size={18} />
+            Settings
+          </button>
+
         </div>
 
         {/* STATISTICS */}
@@ -219,6 +241,9 @@ function App() {
                 name={student.name}
                 course={student.course}
                 age={student.age}
+                phone={student.phone}
+                email={student.email}
+                
 
                 onEdit={() =>
                   setEditingStudent(student)

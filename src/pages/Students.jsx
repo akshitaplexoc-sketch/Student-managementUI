@@ -61,11 +61,9 @@ function Students({
           </div>
 
           <div>
-            <h1>Students</h1>
+            <h1>All Students 👨‍🎓</h1>
 
-            <p>
-              Manage all registered students
-            </p>
+            <p>Manage and view all student records</p>
           </div>
 
         </div>
@@ -174,7 +172,7 @@ function Students({
         <div>
 
           <h2>
-            All Students
+            All Students 👨‍🎓
           </h2>
 
           <p>

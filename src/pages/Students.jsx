@@ -6,6 +6,8 @@ import {
   Filter,
   UserPlus,
   Users,
+  Grid2X2,
+  List,
 } from "lucide-react";
 
 import StudentCard from "../components/StudentCard";
@@ -16,7 +18,7 @@ function Students({
 }) {
   const [search, setSearch] = useState("");
   const [courseFilter, setCourseFilter] = useState("All");
-
+  const [viewMode, setViewMode] = useState("grid");
   const navigate = useNavigate();
 
   // =========================
@@ -144,6 +146,24 @@ function Students({
 
       </div>
 
+    <div className="view-toggle">
+
+        <button
+            className={viewMode === "grid" ? "active" : ""}
+            onClick={() => setViewMode("grid")}
+        >
+            <Grid2X2 size={17} />
+        </button>
+
+        <button
+            className={viewMode === "list" ? "active" : ""}
+            onClick={() => setViewMode("list")}
+        >
+            <List size={17} />
+        </button>
+
+    </div>
+
 
       {/* =========================
           RESULT HEADER
@@ -173,7 +193,13 @@ function Students({
 
       {filteredStudents.length > 0 ? (
 
-        <div className="students-page-grid">
+        <div
+        className={
+        viewMode === "grid"
+        ? "students-page-grid"
+        : "students-list"
+        }
+        >
 
           {filteredStudents.map((student) => (
 

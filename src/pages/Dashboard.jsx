@@ -4,11 +4,15 @@ import {
   GraduationCap,
   UserPlus,
   ArrowRight,
+  BarChart3,
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
 
 function Dashboard({ students = [] }) {
+  // =========================
+  // STATISTICS
+  // =========================
 
   const totalStudents = students.length;
 
@@ -20,14 +24,49 @@ function Dashboard({ students = [] }) {
     (student) => student.course === "IT"
   ).length;
 
-  const otherStudents =
-    students.filter(
-      (student) =>
-        student.course !== "CSE" &&
-        student.course !== "IT"
-    ).length;
+  const aiMlStudents = students.filter(
+    (student) => student.course === "AI/ML"
+  ).length;
 
-  // Last 3 students
+  const dataScienceStudents = students.filter(
+    (student) => student.course === "Data Science"
+  ).length;
+
+  const otherStudents = students.filter(
+    (student) =>
+      student.course !== "CSE" &&
+      student.course !== "IT" &&
+      student.course !== "AI/ML" &&
+      student.course !== "Data Science"
+  ).length;
+
+  // =========================
+  // COURSE STATISTICS
+  // =========================
+
+  const courseStats = [
+    {
+      name: "CSE",
+      count: cseStudents,
+    },
+    {
+      name: "IT",
+      count: itStudents,
+    },
+    {
+      name: "AI/ML",
+      count: aiMlStudents,
+    },
+    {
+      name: "Data Science",
+      count: dataScienceStudents,
+    },
+  ];
+
+  // =========================
+  // RECENT STUDENTS
+  // =========================
+
   const recentStudents = [...students]
     .slice(-3)
     .reverse();
@@ -67,6 +106,8 @@ function Dashboard({ students = [] }) {
 
       <div className="dashboard-stats">
 
+        {/* TOTAL */}
+
         <div className="dashboard-stat-card">
 
           <div className="stat-icon purple">
@@ -80,6 +121,8 @@ function Dashboard({ students = [] }) {
 
         </div>
 
+
+        {/* CSE */}
 
         <div className="dashboard-stat-card">
 
@@ -95,6 +138,8 @@ function Dashboard({ students = [] }) {
         </div>
 
 
+        {/* IT */}
+
         <div className="dashboard-stat-card">
 
           <div className="stat-icon green">
@@ -109,6 +154,8 @@ function Dashboard({ students = [] }) {
         </div>
 
 
+        {/* OTHER */}
+
         <div className="dashboard-stat-card">
 
           <div className="stat-icon orange">
@@ -119,6 +166,82 @@ function Dashboard({ students = [] }) {
             <p>Other Courses</p>
             <h2>{otherStudents}</h2>
           </div>
+
+        </div>
+
+      </div>
+
+
+      {/* =========================
+          COURSE STATISTICS
+      ========================= */}
+
+      <div className="dashboard-section course-statistics">
+
+        <div className="section-heading">
+
+          <div>
+            <h2>Course Statistics</h2>
+
+            <p>
+              Student distribution by course
+            </p>
+          </div>
+
+          <BarChart3 size={22} />
+
+        </div>
+
+
+        <div className="course-stats-list">
+
+          {courseStats.map((course) => {
+
+            const percentage =
+              totalStudents > 0
+                ? Math.round(
+                    (course.count / totalStudents) * 100
+                  )
+                : 0;
+
+            return (
+              <div
+                className="course-stat-item"
+                key={course.name}
+              >
+
+                <div className="course-stat-header">
+
+                  <span>
+                    {course.name}
+                  </span>
+
+                  <strong>
+                    {course.count} students
+                  </strong>
+
+                </div>
+
+
+                <div className="course-progress">
+
+                  <div
+                    className="course-progress-bar"
+                    style={{
+                      width: `${percentage}%`,
+                    }}
+                  />
+
+                </div>
+
+
+                <small>
+                  {percentage}% of total students
+                </small>
+
+              </div>
+            );
+          })}
 
         </div>
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import {
   BrowserRouter,
@@ -24,61 +24,71 @@ function App() {
   // STUDENTS STATE
   // =========================
 
-  const [students, setStudents] = useState([
-    {
-      id: 1,
-      name: "Akshita",
-      course: "CSE",
-      age: 20,
-      phone: "9876543210",
-      email: "akshita@gmail.com"
-    },
+  const defaultStudents = [
+  {
+    id: 1,
+    name: "Akshita",
+    course: "CSE",
+    age: 20,
+    phone: "9876543210",
+    email: "akshita@gmail.com"
+  },
+  {
+    id: 2,
+    name: "Rahul",
+    course: "IT",
+    age: 21,
+    phone: "9876543211",
+    email: "rahul@gmail.com"
+  },
+  {
+    id: 3,
+    name: "Priya",
+    course: "CSE",
+    age: 20,
+    phone: "9876543212",
+    email: "priya@gmail.com"
+  },
+  {
+    id: 4,
+    name: "Neha",
+    course: "AI/ML",
+    age: 21,
+    phone: "9876543213",
+    email: "neha@gmail.com"
+  },
+  {
+    id: 5,
+    name: "Aman",
+    course: "Data Science",
+    age: 22,
+    phone: "9876543214",
+    email: "aman@gmail.com"
+  },
+  {
+    id: 6,
+    name: "Riya",
+    course: "IT",
+    age: 20,
+    phone: "9876543215",
+    email: "riya@gmail.com"
+  }
+];
 
-    {
-      id: 2,
-      name: "Rahul",
-      course: "IT",
-      age: 21,
-      phone: "9876543211",
-      email: "rahul@gmail.com"
-    },
+  const [students, setStudents] = useState(() => {
+  const savedStudents = localStorage.getItem("students");
 
-    {
-      id: 3,
-      name: "Priya",
-      course: "CSE",
-      age: 20,
-      phone: "9876543212",
-      email: "priya@gmail.com"
-    },
+  return savedStudents
+    ? JSON.parse(savedStudents)
+    : defaultStudents;
+  });
 
-    {
-      id: 4,
-      name: "Neha",
-      course: "AI/ML",
-      age: 21,
-      phone: "9876543213",
-      email: "neha@gmail.com"
-    },
-
-    {
-      id: 5,
-      name: "Aman",
-      course: "Data Science",
-      age: 22,
-      phone: "9876543214",
-      email: "aman@gmail.com"
-    },
-
-    {
-      id: 6,
-      name: "Riya",
-      course: "IT",
-      age: 20,
-      phone: "9876543215",
-      email: "riya@gmail.com"
-    }
-  ]);
+  useEffect(() => {
+    localStorage.setItem(
+      "students",
+      JSON.stringify(students)
+    );
+  }, [students]);
 
   // =========================
   // ADD STUDENT
@@ -127,6 +137,11 @@ function App() {
 
   };
 
+  const resetStudents = () => {
+    setStudents([]);
+      localStorage.removeItem("students");
+  };
+
   return (
     <BrowserRouter>
 
@@ -165,7 +180,7 @@ function App() {
                   <Students
                     students={students}
                     onDelete={deleteStudent}
-                    onUpdate={updateStudent}
+                    onUpdateStudent={updateStudent}
                   />
                 }
               />
@@ -216,8 +231,12 @@ function App() {
               {/* SETTINGS */}
 
               <Route
-                path="/settings"
-                element={<Settings />}
+                  path="/settings"
+                  element={
+                    <Settings
+                      onResetStudents={resetStudents}
+                    />
+                  }
               />
 
             </Routes>

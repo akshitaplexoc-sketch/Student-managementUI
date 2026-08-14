@@ -2,7 +2,7 @@ import { ArrowLeft, Save, User } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useState } from "react";
 
-function EditStudent({ students = [], onUpdate }) {
+function EditStudent({ students = [], onUpdateStudent }) {
   const { id } = useParams();
   const navigate = useNavigate();
 
@@ -43,7 +43,7 @@ function EditStudent({ students = [], onUpdate }) {
       email,
     };
 
-    onUpdate(updatedStudent);
+    onUpdateStudent(updatedStudent);
 
     navigate(`/students/${student.id}`);
   };

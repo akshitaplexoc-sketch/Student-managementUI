@@ -3,15 +3,6 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import StudentService from "./services/StudentService";
 
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
-
-import StudentService from "./services/StudentService";
-import EditStudent from "./pages/EditStudent";
-import StudentDetails from "./pages/StudentDetails";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 
@@ -29,43 +20,6 @@ function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  
-  const loadStudents = async () => {
-  try {
-    setLoading(true);
-
-    const response = await StudentService.getStudents();
-
-    setStudents(response.data);
-
-    setError("");
-
-  } catch (error)
-  {
-    console.log(error.response?.data);
-    console.log(error.response);
-    console.error(error);
-    setError("Failed to load students");
-
-  }
-  finally 
-  {
-    setLoading(false);
-  }
-};
-
-useEffect(() => {
-  loadStudents();
-}, []);
-
-if (loading) {
-    return <h2>Loading...</h2>;
-  }
-
-  if (error) {
-    return <h2>{error}</h2>;
-  }
-
 
   // =========================
   // LOAD STUDENTS
@@ -80,6 +34,7 @@ if (loading) {
       setStudents(response.data);
       setError("");
     } catch (error) {
+      console.log(error.response?.data);
       console.error(error);
       setError("Failed to load students");
     } finally {
@@ -95,60 +50,22 @@ if (loading) {
   // ADD STUDENT
   // =========================
 
- const addStudent = async (newStudent) => {
-  try {
-    const response = await StudentService.addStudent(newStudent);
-
-    console.log("Student Added:", response.data);
   const addStudent = async (student) => {
     try {
-      await StudentService.addStudent(student);
+      const response = await StudentService.addStudent(student);
+      console.log("Student Added:", response.data);
+
       await loadStudents();
     } catch (error) {
+      console.log(error.response?.status);
+      console.log(error.response?.data);
       console.error(error);
     }
   };
 
-    await loadStudents();
-  } catch (error) {
-    console.log("Status:", error.response?.status);
-    console.log("Data:", error.response?.data);
-    console.error(error);
-  }
-};
   // =========================
   // UPDATE STUDENT
   // =========================
-    const updateStudent = async (updatedStudent) => {
-      try {
-    await StudentService.updateStudent(updatedStudent);
-    await loadStudents();
-    } catch (error) {
-    console.error(error);
-  }
-};
-
-    const deleteStudent = async (id) => {
-      await StudentService.deleteStudent(id);
-      await loadStudents();
-    };
-
-    const deleteAllStudents = async () => {
-      await StudentService.deleteAllStudents();
-      await loadStudents();
-    };
-
-    const resetStudents = async () => {
-    try {
-        await StudentService.deleteAllStudents();
-        await loadStudents();
-    } catch (error) {
-        console.error(error);
-    }
-};
-  
-  return (
-    <BrowserRouter basename="/">
 
   const updateStudent = async (student) => {
     try {
@@ -202,11 +119,6 @@ if (loading) {
           <Header />
 
           <main className="page-content">
-              {loading && <h2>Loading...</h2>}
-
-              {error && <h2>{error}</h2>}
-
-              {!loading && !error && (
             <Routes>
               <Route
                 path="/"
@@ -267,8 +179,6 @@ if (loading) {
                 }
               />
             </Routes>
-    )}
-
           </main>
         </div>
       </div>

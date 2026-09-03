@@ -8,8 +8,8 @@ function AddStudent({
 }) {
   const navigate = useNavigate();
 
-  const handleAddStudent = (newStudent) => {
-    onAddStudent(newStudent);
+  const handleAddStudent = async (newStudent) => {
+    await onAddStudent(newStudent);
     navigate("/students");
   };
 

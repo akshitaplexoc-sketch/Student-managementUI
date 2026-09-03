@@ -15,10 +15,6 @@ function StudentForm({
     editingStudent?.course || ""
   );
 
-  const [age, setAge] = useState(
-    editingStudent?.age || ""
-  );
-
   const [phone, setPhone] = useState(
     editingStudent?.phone || ""
   );
@@ -36,23 +32,16 @@ function StudentForm({
 
     // Validation
     if (
-      !name.trim() ||
-      !course ||
-      !age ||
-      !phone.trim() ||
-      !email.trim()
-    ) {
+    !name.trim() ||
+    !course ||
+    !phone.trim() ||
+    !email.trim())  
+    {
       setError("⚠️ Please fill all fields");
       return;
     }
 
-    // Age validation
-    if (Number(age) < 1 || Number(age) > 100) {
-      setError(
-        "⚠️ Age must be between 1 and 100"
-      );
-      return;
-    }
+    
 
     // EDIT MODE
     if (editingStudent) {
@@ -60,13 +49,13 @@ function StudentForm({
         id: editingStudent.id,
         name: name.trim(),
         course: course,
-        age: Number(age),
         phone: phone.trim(),
         email: email.trim(),
       };
 
       onUpdateStudent(updatedStudent);
 
+      
       return;
     }
 
@@ -88,20 +77,17 @@ function StudentForm({
 
     // ADD STUDENT
     const newStudent = {
-      id: Date.now(),
-      name: name.trim(),
-      course: course,
-      age: Number(age),
-      phone: phone.trim(),
-      email: email.trim(),
-    };
+    name: name.trim(),
+    course: course,
+    phone: phone.trim(),
+    email: email.trim(),
+};
 
     onAddStudent(newStudent);
 
     // Clear form
     setName("");
     setCourse("");
-    setAge("");
     setPhone("");
     setEmail("");
 
@@ -181,17 +167,7 @@ function StudentForm({
           </option>
         </select>
 
-        {/* AGE */}
-
-        <input
-          type="number"
-          placeholder="Age"
-          value={age}
-          onChange={(e) =>
-            setAge(e.target.value)
-          }
-        />
-
+       
         {/* PHONE */}
 
         <input

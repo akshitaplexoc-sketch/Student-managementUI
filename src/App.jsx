@@ -5,6 +5,8 @@ import {
   Routes,
   Route
 } from "react-router-dom";
+
+import StudentService from "./services/StudentService";
 import EditStudent from "./pages/EditStudent";
 import StudentDetails from "./pages/StudentDetails";
 import Sidebar from "./components/Sidebar";
@@ -19,131 +21,97 @@ import Settings from "./pages/Settings";
 import "./App.css";
 
 function App() {
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  
+  const loadStudents = async () => {
+  try {
+    setLoading(true);
 
-  // =========================
-  // STUDENTS STATE
-  // =========================
+    const response = await StudentService.getStudents();
 
-  const defaultStudents = [
+    setStudents(response.data);
+
+    setError("");
+
+  } catch (error)
   {
-    id: 1,
-    name: "Akshita",
-    course: "CSE",
-    age: 20,
-    phone: "9876543210",
-    email: "akshita@gmail.com"
-  },
-  {
-    id: 2,
-    name: "Rahul",
-    course: "IT",
-    age: 21,
-    phone: "9876543211",
-    email: "rahul@gmail.com"
-  },
-  {
-    id: 3,
-    name: "Priya",
-    course: "CSE",
-    age: 20,
-    phone: "9876543212",
-    email: "priya@gmail.com"
-  },
-  {
-    id: 4,
-    name: "Neha",
-    course: "AI/ML",
-    age: 21,
-    phone: "9876543213",
-    email: "neha@gmail.com"
-  },
-  {
-    id: 5,
-    name: "Aman",
-    course: "Data Science",
-    age: 22,
-    phone: "9876543214",
-    email: "aman@gmail.com"
-  },
-  {
-    id: 6,
-    name: "Riya",
-    course: "IT",
-    age: 20,
-    phone: "9876543215",
-    email: "riya@gmail.com"
+    console.log(error.response?.data);
+    console.log(error.response);
+    console.error(error);
+    setError("Failed to load students");
+
   }
-];
+  finally 
+  {
+    setLoading(false);
+  }
+};
 
-  const [students, setStudents] = useState(() => {
-  const savedStudents = localStorage.getItem("students");
+useEffect(() => {
+  loadStudents();
+}, []);
 
-  return savedStudents
-    ? JSON.parse(savedStudents)
-    : defaultStudents;
-  });
+if (loading) {
+    return <h2>Loading...</h2>;
+  }
 
-  useEffect(() => {
-    localStorage.setItem(
-      "students",
-      JSON.stringify(students)
-    );
-  }, [students]);
+  if (error) {
+    return <h2>{error}</h2>;
+  }
+
 
   // =========================
   // ADD STUDENT
   // =========================
 
-  const addStudent = (newStudent) => {
+ const addStudent = async (newStudent) => {
+  try {
+    const response = await StudentService.addStudent(newStudent);
 
-    setStudents((prevStudents) => [
-      ...prevStudents,
-      {
-        ...newStudent,
-        id: Date.now()
-      }
-    ]);
+    console.log("Student Added:", response.data);
 
-  };
-
+    await loadStudents();
+  } catch (error) {
+    console.log("Status:", error.response?.status);
+    console.log("Data:", error.response?.data);
+    console.error(error);
+  }
+};
   // =========================
   // UPDATE STUDENT
   // =========================
+    const updateStudent = async (updatedStudent) => {
+      try {
+    await StudentService.updateStudent(updatedStudent);
+    await loadStudents();
+    } catch (error) {
+    console.error(error);
+  }
+};
 
-  const updateStudent = (updatedStudent) => {
+    const deleteStudent = async (id) => {
+      await StudentService.deleteStudent(id);
+      await loadStudents();
+    };
 
-    setStudents((prevStudents) =>
-      prevStudents.map((student) =>
-        student.id === updatedStudent.id
-          ? updatedStudent
-          : student
-      )
-    );
+    const deleteAllStudents = async () => {
+      await StudentService.deleteAllStudents();
+      await loadStudents();
+    };
 
-  };
-
-  // =========================
-  // DELETE STUDENT
-  // =========================
-
-  const deleteStudent = (studentId) => {
-
-    setStudents((prevStudents) =>
-      prevStudents.filter(
-        (student) =>
-          student.id !== studentId
-      )
-    );
-
-  };
-
-  const resetStudents = () => {
-    setStudents([]);
-      localStorage.removeItem("students");
-  };
-
+    const resetStudents = async () => {
+    try {
+        await StudentService.deleteAllStudents();
+        await loadStudents();
+    } catch (error) {
+        console.error(error);
+    }
+};
+  
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/">
 
       <div className="app-layout">
 
@@ -158,7 +126,11 @@ function App() {
           <Header />
 
           <main className="page-content">
+              {loading && <h2>Loading...</h2>}
 
+              {error && <h2>{error}</h2>}
+
+              {!loading && !error && (
             <Routes>
 
               {/* DASHBOARD */}
@@ -240,6 +212,7 @@ function App() {
               />
 
             </Routes>
+    )}
 
           </main>
 

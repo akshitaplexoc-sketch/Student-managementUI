@@ -31,7 +31,7 @@ function EditStudent({ students = [], onUpdateStudent }) {
     );
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     const updatedStudent = {
@@ -43,10 +43,10 @@ function EditStudent({ students = [], onUpdateStudent }) {
       email,
     };
 
-    onUpdateStudent(updatedStudent);
+   await onUpdateStudent(updatedStudent);
 
-    navigate(`/students/${student.id}`);
-  };
+    navigate("/students");
+  }
 
   return (
     <div className="edit-page">

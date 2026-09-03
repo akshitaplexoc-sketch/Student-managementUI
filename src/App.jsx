@@ -1,178 +1,124 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-import {
-  BrowserRouter,
-  Routes,
-  Route
-} from "react-router-dom";
-import EditStudent from "./pages/EditStudent";
-import StudentDetails from "./pages/StudentDetails";
+import StudentService from "./services/StudentService";
+
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
 
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import AddStudent from "./pages/AddStudent";
+import EditStudent from "./pages/EditStudent";
+import StudentDetails from "./pages/StudentDetails";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 
 import "./App.css";
 
 function App() {
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   // =========================
-  // STUDENTS STATE
+  // LOAD STUDENTS
   // =========================
 
-  const defaultStudents = [
-  {
-    id: 1,
-    name: "Akshita",
-    course: "CSE",
-    age: 20,
-    phone: "9876543210",
-    email: "akshita@gmail.com"
-  },
-  {
-    id: 2,
-    name: "Rahul",
-    course: "IT",
-    age: 21,
-    phone: "9876543211",
-    email: "rahul@gmail.com"
-  },
-  {
-    id: 3,
-    name: "Priya",
-    course: "CSE",
-    age: 20,
-    phone: "9876543212",
-    email: "priya@gmail.com"
-  },
-  {
-    id: 4,
-    name: "Neha",
-    course: "AI/ML",
-    age: 21,
-    phone: "9876543213",
-    email: "neha@gmail.com"
-  },
-  {
-    id: 5,
-    name: "Aman",
-    course: "Data Science",
-    age: 22,
-    phone: "9876543214",
-    email: "aman@gmail.com"
-  },
-  {
-    id: 6,
-    name: "Riya",
-    course: "IT",
-    age: 20,
-    phone: "9876543215",
-    email: "riya@gmail.com"
-  }
-];
+  const loadStudents = async () => {
+    try {
+      setLoading(true);
 
-  const [students, setStudents] = useState(() => {
-  const savedStudents = localStorage.getItem("students");
+      const response = await StudentService.getStudents();
 
-  return savedStudents
-    ? JSON.parse(savedStudents)
-    : defaultStudents;
-  });
+      setStudents(response.data);
+      setError("");
+    } catch (error) {
+      console.error(error);
+      setError("Failed to load students");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    localStorage.setItem(
-      "students",
-      JSON.stringify(students)
-    );
-  }, [students]);
+    loadStudents();
+  }, []);
 
   // =========================
   // ADD STUDENT
   // =========================
 
-  const addStudent = (newStudent) => {
-
-    setStudents((prevStudents) => [
-      ...prevStudents,
-      {
-        ...newStudent,
-        id: Date.now()
-      }
-    ]);
-
+  const addStudent = async (student) => {
+    try {
+      await StudentService.addStudent(student);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // =========================
   // UPDATE STUDENT
   // =========================
 
-  const updateStudent = (updatedStudent) => {
-
-    setStudents((prevStudents) =>
-      prevStudents.map((student) =>
-        student.id === updatedStudent.id
-          ? updatedStudent
-          : student
-      )
-    );
-
+  const updateStudent = async (student) => {
+    try {
+      await StudentService.updateStudent(student);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   // =========================
   // DELETE STUDENT
   // =========================
 
-  const deleteStudent = (studentId) => {
-
-    setStudents((prevStudents) =>
-      prevStudents.filter(
-        (student) =>
-          student.id !== studentId
-      )
-    );
-
+  const deleteStudent = async (id) => {
+    try {
+      await StudentService.deleteStudent(id);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const resetStudents = () => {
-    setStudents([]);
-      localStorage.removeItem("students");
+  // =========================
+  // DELETE ALL STUDENTS
+  // =========================
+
+  const resetStudents = async () => {
+    try {
+      await StudentService.deleteAllStudents();
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (error) {
+    return <h2>{error}</h2>;
+  }
 
   return (
     <BrowserRouter>
-
       <div className="app-layout">
-
-        {/* SIDEBAR */}
-
         <Sidebar />
 
-        {/* MAIN AREA */}
-
         <div className="main-area">
-
           <Header />
 
           <main className="page-content">
-
             <Routes>
-
-              {/* DASHBOARD */}
-
               <Route
                 path="/"
-                element={
-                  <Dashboard
-                    students={students}
-                  />
-                }
+                element={<Dashboard students={students} />}
               />
-
-              {/* STUDENTS */}
 
               <Route
                 path="/students"
@@ -185,8 +131,6 @@ function App() {
                 }
               />
 
-              {/* ADD STUDENT */}
-
               <Route
                 path="/students/add"
                 element={
@@ -196,7 +140,8 @@ function App() {
                   />
                 }
               />
-               <Route
+
+              <Route
                 path="/students/:id"
                 element={
                   <StudentDetails
@@ -205,7 +150,7 @@ function App() {
                 }
               />
 
-               <Route
+              <Route
                 path="/students/edit/:id"
                 element={
                   <EditStudent
@@ -215,38 +160,23 @@ function App() {
                 }
               />
 
-
-
-              {/* REPORTS */}
-
               <Route
                 path="/reports"
+                element={<Reports students={students} />}
+              />
+
+              <Route
+                path="/settings"
                 element={
-                  <Reports
-                    students={students}
+                  <Settings
+                    onResetStudents={resetStudents}
                   />
                 }
               />
-
-              {/* SETTINGS */}
-
-              <Route
-                  path="/settings"
-                  element={
-                    <Settings
-                      onResetStudents={resetStudents}
-                    />
-                  }
-              />
-
             </Routes>
-
           </main>
-
         </div>
-
       </div>
-
     </BrowserRouter>
   );
 }

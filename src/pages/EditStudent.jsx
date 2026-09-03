@@ -31,22 +31,25 @@ function EditStudent({ students = [], onUpdateStudent }) {
     );
   }
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    const updatedStudent = {
-      ...student,
-      name,
-      course,
-      age,
-      phone,
-      email,
-    };
-
-    onUpdateStudent(updatedStudent);
-
-    navigate(`/students/${student.id}`);
+  const updatedStudent = {
+    ...student,
+    name,
+    course,
+    age,
+    phone,
+    email,
   };
+
+  try {
+    await onUpdateStudent(updatedStudent);
+    navigate(`/students/${student.id}`);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   return (
     <div className="edit-page">

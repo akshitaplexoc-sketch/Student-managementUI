@@ -88,7 +88,6 @@ function StudentForm({
 
     // ADD STUDENT
     const newStudent = {
-      id: Date.now(),
       name: name.trim(),
       course: course,
       age: Number(age),

@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import StudentService from "./services/StudentService";
 
 import {
   BrowserRouter,
@@ -15,6 +18,8 @@ import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import Students from "./pages/Students";
 import AddStudent from "./pages/AddStudent";
+import EditStudent from "./pages/EditStudent";
+import StudentDetails from "./pages/StudentDetails";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
 
@@ -63,6 +68,30 @@ if (loading) {
 
 
   // =========================
+  // LOAD STUDENTS
+  // =========================
+
+  const loadStudents = async () => {
+    try {
+      setLoading(true);
+
+      const response = await StudentService.getStudents();
+
+      setStudents(response.data);
+      setError("");
+    } catch (error) {
+      console.error(error);
+      setError("Failed to load students");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadStudents();
+  }, []);
+
+  // =========================
   // ADD STUDENT
   // =========================
 
@@ -71,6 +100,14 @@ if (loading) {
     const response = await StudentService.addStudent(newStudent);
 
     console.log("Student Added:", response.data);
+  const addStudent = async (student) => {
+    try {
+      await StudentService.addStudent(student);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
     await loadStudents();
   } catch (error) {
@@ -113,16 +150,55 @@ if (loading) {
   return (
     <BrowserRouter basename="/">
 
+  const updateStudent = async (student) => {
+    try {
+      await StudentService.updateStudent(student);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // =========================
+  // DELETE STUDENT
+  // =========================
+
+  const deleteStudent = async (id) => {
+    try {
+      await StudentService.deleteStudent(id);
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // =========================
+  // DELETE ALL STUDENTS
+  // =========================
+
+  const resetStudents = async () => {
+    try {
+      await StudentService.deleteAllStudents();
+      await loadStudents();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  if (loading) {
+    return <h2>Loading...</h2>;
+  }
+
+  if (error) {
+    return <h2>{error}</h2>;
+  }
+
+  return (
+    <BrowserRouter>
       <div className="app-layout">
-
-        {/* SIDEBAR */}
-
         <Sidebar />
 
-        {/* MAIN AREA */}
-
         <div className="main-area">
-
           <Header />
 
           <main className="page-content">
@@ -132,19 +208,10 @@ if (loading) {
 
               {!loading && !error && (
             <Routes>
-
-              {/* DASHBOARD */}
-
               <Route
                 path="/"
-                element={
-                  <Dashboard
-                    students={students}
-                  />
-                }
+                element={<Dashboard students={students} />}
               />
-
-              {/* STUDENTS */}
 
               <Route
                 path="/students"
@@ -157,8 +224,6 @@ if (loading) {
                 }
               />
 
-              {/* ADD STUDENT */}
-
               <Route
                 path="/students/add"
                 element={
@@ -168,7 +233,8 @@ if (loading) {
                   />
                 }
               />
-               <Route
+
+              <Route
                 path="/students/:id"
                 element={
                   <StudentDetails
@@ -177,7 +243,7 @@ if (loading) {
                 }
               />
 
-               <Route
+              <Route
                 path="/students/edit/:id"
                 element={
                   <EditStudent
@@ -187,39 +253,25 @@ if (loading) {
                 }
               />
 
-
-
-              {/* REPORTS */}
-
               <Route
                 path="/reports"
+                element={<Reports students={students} />}
+              />
+
+              <Route
+                path="/settings"
                 element={
-                  <Reports
-                    students={students}
+                  <Settings
+                    onResetStudents={resetStudents}
                   />
                 }
               />
-
-              {/* SETTINGS */}
-
-              <Route
-                  path="/settings"
-                  element={
-                    <Settings
-                      onResetStudents={resetStudents}
-                    />
-                  }
-              />
-
             </Routes>
     )}
 
           </main>
-
         </div>
-
       </div>
-
     </BrowserRouter>
   );
 }

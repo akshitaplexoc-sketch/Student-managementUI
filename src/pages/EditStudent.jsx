@@ -43,10 +43,13 @@ function EditStudent({ students = [], onUpdateStudent }) {
       email,
     };
 
-   await onUpdateStudent(updatedStudent);
-
-    navigate("/students");
-  }
+    try {
+      await onUpdateStudent(updatedStudent);
+      navigate("/students");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="edit-page">

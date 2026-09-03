@@ -24,15 +24,15 @@ function Settings({ onResetStudents }) {
   }, []);
 
 
-  const handleReset = () => {
-    const confirmReset = window.confirm(
-      "Are you sure you want to delete all student records?"
-    );
+const handleReset = async () => {
+  const confirmReset = window.confirm(
+    "Are you sure you want to delete all student records?"
+  );
 
-    if (confirmReset) {
-      onResetStudents();
-    }
-  };
+  if (confirmReset) {
+    await onResetStudents();
+  }
+};
 
   return (
     <div className="settings-page">

@@ -26,7 +26,8 @@ function StudentForm({
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setError("");
     setSuccess("");
 
@@ -77,12 +78,13 @@ function StudentForm({
 
     // ADD STUDENT
     const newStudent = {
-    name: name.trim(),
-    course: course,
-    phone: phone.trim(),
-    email: email.trim(),
-};
-
+      
+      name: name.trim(),
+      course: course,
+      phone: phone.trim(),
+      email: email.trim(),
+    };
+    console.log(newStudent);
     onAddStudent(newStudent);
 
     // Clear form
@@ -192,10 +194,8 @@ function StudentForm({
 
         {/* SUBMIT */}
 
-        <button onClick={handleSubmit}>
-          {editingStudent
-            ? "Update Student"
-            : "+ Add Student"}
+        <button type="submit">
+           {editingStudent ? "Update Student" : "+ Add Student"}
         </button>
 
         {/* CANCEL */}

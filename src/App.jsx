@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 import StudentService from "./services/StudentService";
 
@@ -13,6 +13,7 @@ import EditStudent from "./pages/EditStudent";
 import StudentDetails from "./pages/StudentDetails";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login"; // 👈 Added Login Page import
 
 import "./App.css";
 
@@ -20,23 +21,31 @@ function App() {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  
+  // 🔒 Authentication tracking state
+  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
 
   // =========================
   // LOAD STUDENTS
   // =========================
-
   const loadStudents = async () => {
+    if (!isAuthenticated) return; // Stop execution if token is missing
+    
     try {
       setLoading(true);
-
-      const response = await StudentService.getStudents();
-
-      setStudents(response.data);
+      const data = await StudentService.getStudents();
+      setStudents(data || []);
       setError("");
     } catch (error) {
       console.log(error.response?.data);
       console.error(error);
-      setError("Failed to load students");
+      
+      // Auto logout if the backend rejects the token with a 401 Unauthorized status
+      if (error.response?.status === 401) {
+        handleLogout();
+      } else {
+        setError("Failed to load students");
+      }
     } finally {
       setLoading(false);
     }
@@ -44,17 +53,28 @@ function App() {
 
   useEffect(() => {
     loadStudents();
-  }, []);
+  }, [isAuthenticated]);
+
+  // =========================
+  // LOGIN / LOGOUT HANDLERS
+  // =========================
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setStudents([]);
+  };
 
   // =========================
   // ADD STUDENT
   // =========================
-
   const addStudent = async (student) => {
     try {
-      const response = await StudentService.addStudent(student);
-      console.log("Student Added:", response.data);
-
+      const data = await StudentService.addStudent(student);
+      console.log("Student Added Successfully:", data);
       await loadStudents();
     } catch (error) {
       console.log(error.response?.status);
@@ -66,7 +86,6 @@ function App() {
   // =========================
   // UPDATE STUDENT
   // =========================
-
   const updateStudent = async (student) => {
     try {
       await StudentService.updateStudent(student);
@@ -79,7 +98,6 @@ function App() {
   // =========================
   // DELETE STUDENT
   // =========================
-
   const deleteStudent = async (id) => {
     try {
       await StudentService.deleteStudent(id);
@@ -92,7 +110,6 @@ function App() {
   // =========================
   // DELETE ALL STUDENTS
   // =========================
-
   const resetStudents = async () => {
     try {
       await StudentService.deleteAllStudents();
@@ -101,6 +118,18 @@ function App() {
       console.error(error);
     }
   };
+
+  // Render Login flow if the user is unauthenticated
+  if (!isAuthenticated) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<Login onLoginSuccess={handleLoginSuccess} />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    );
+  }
 
   if (loading) {
     return <h2>Loading...</h2>;
@@ -113,7 +142,8 @@ function App() {
   return (
     <BrowserRouter>
       <div className="app-layout">
-        <Sidebar />
+        {/* Passed handleLogout function downward into your Sidebar component */}
+        <Sidebar onLogout={handleLogout} />
 
         <div className="main-area">
           <Header />
@@ -127,7 +157,7 @@ function App() {
 
               <Route
                 path="/students"
-                element={
+                element = {
                   <Students
                     students={students}
                     onDelete={deleteStudent}
@@ -178,6 +208,9 @@ function App() {
                   />
                 }
               />
+              
+              {/* Fallback routing protection strategy */}
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </main>
         </div>

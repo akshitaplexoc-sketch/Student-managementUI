@@ -3,12 +3,14 @@ import {
   Users,
   UserPlus,
   BarChart3,
-  Settings
+  Settings,
+  LogOut // 👈 Imported LogOut icon from your asset pack
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
 
-function Sidebar() {
+// 🔒 Accepted the functional onLogout prop parameter from App.jsx
+function Sidebar({ onLogout }) {
   const menuItems = [
     {
       name: "Dashboard",
@@ -41,32 +43,24 @@ function Sidebar() {
     <aside className="sidebar">
 
       {/* Logo */}
-
       <div className="sidebar-logo">
-
         <div className="logo-icon">
           <Users size={22} />
         </div>
-
         <div>
           <h2>StudentHub</h2>
           <span>Management System</span>
         </div>
-
       </div>
 
       {/* Navigation */}
-
       <nav className="sidebar-nav">
-
         <p className="nav-title">
           MAIN MENU
         </p>
 
         {menuItems.map((item) => {
-
           const Icon = item.icon;
-
           return (
             <NavLink
               key={item.name}
@@ -77,36 +71,50 @@ function Sidebar() {
                 }`
               }
             >
-
               <Icon size={20} />
-
               <span>
                 {item.name}
               </span>
-
             </NavLink>
           );
         })}
-
       </nav>
 
-      {/* Bottom */}
-
+      {/* Bottom Profile & Security Actions */}
       <div className="sidebar-bottom">
-
-        <div className="user-mini">
-
+        <div className="user-mini" style={{ marginBottom: "15px" }}>
           <div className="user-avatar">
             A
           </div>
-
           <div>
             <strong>Akshu</strong>
             <span>Administrator</span>
           </div>
-
         </div>
 
+        {/* 🚪 Fully styled functional interactive Logout Button */}
+        <button
+          onClick={onLogout}
+          className="nav-link"
+          style={{
+            width: "100%",
+            background: "none",
+            border: "none",
+            color: "#dc3545", // Clear descriptive red accent color indicator
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "12px",
+            padding: "10px 16px",
+            fontSize: "14px",
+            fontWeight: "500",
+            fontFamily: "inherit",
+            textAlign: "left"
+          }}
+        >
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
       </div>
 
     </aside>
